@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16213a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SkinVet">
+<meta name="format-detection" content="telephone=no">
+<title>Skin Smart Vet</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --page:#ebe7dc; --paper:#fffdf8; --ink:#1a1e27; --muted:#5d6372; --rule:#e6e0d1; --soft:#f6f2e8;
+    --navy:#0e162c; --navy-2:#24345a; --gold:#c9a24a; --gold-2:#f0d488; --accent:#8c2433; --teal:#2bb3a6;
+    --warn:#8a5a00; --warn-bg:#fdf3dc;
+    --sh-1:0 1px 1px rgba(14,22,44,.04),0 2px 4px rgba(14,22,44,.04);
+    --sh-2:0 1px 2px rgba(14,22,44,.05),0 6px 14px rgba(14,22,44,.07),0 18px 40px -12px rgba(14,22,44,.18);
+    --sh-3:0 2px 4px rgba(14,22,44,.06),0 12px 28px rgba(14,22,44,.12),0 40px 80px -20px rgba(14,22,44,.35);
+   --serif:'Noto Sans Thai Looped',-apple-system,system-ui,sans-serif;
+--sans:'Noto Sans Thai Looped',-apple-system,system-ui,sans-serif;
+    --c-ringworm:#a3283a; --c-bacterial:#c97f16; --c-fungal:#178a82; --c-healthy:#3d8a47; --c-other:#6b7280; --c-mixed:#7d4fb0; --c-aging:#b07ed2;
+    --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --page:#0b0d12; --paper:#151821; --ink:#ebe8e0; --muted:#a3a8b4; --rule:#2a2e39; --soft:#1c2029;
+      --warn:#f1c76c; --warn-bg:#2b2311;
+      --sh-1:0 1px 2px rgba(0,0,0,.4);
+      --sh-2:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.45);
+      --sh-3:0 2px 6px rgba(0,0,0,.5),0 30px 70px -10px rgba(0,0,0,.7);
+      --c-ringworm:#ec7f8e; --c-bacterial:#efaa4c; --c-fungal:#4fd0c5; --c-healthy:#82cc8b; --c-other:#9aa1ad; --c-mixed:#be98e6; --c-aging:#c17ed2;
+      --accent:#e3798a;
+    }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  html,body{margin:0;background:var(--page);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  body{overflow-x:hidden}
+
+  /* ================= SPLASH ================= */
+  #splash{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#f6efdc;
+    background:radial-gradient(80% 60% at 20% 15%,#2c4170 0%,transparent 60%),radial-gradient(70% 60% at 85% 85%,#5a1e2c 0%,transparent 60%),#0b1225;
+    transition:opacity .6s ease,visibility .6s;padding:24px}
+  #splash.gone{opacity:0;visibility:hidden}
+  .logo-xl{width:132px;height:132px;position:relative}
+  .logo-xl svg{position:absolute;top:0;left:0;width:100%;height:100%}
+  .spin{animation:spin 9s linear infinite;-webkit-animation:spin 9s linear infinite}
+  .spin-r{animation:spin 14s linear infinite reverse}
+  .paw-pop{animation:pop .9s cubic-bezier(.2,1.4,.4,1) both}
+  #splash h1{margin:6px 0 0;font-size:30px;letter-spacing:.01em;text-align:center;animation:rise .8s .25s both}
+  #splash p{margin:0;font:14px var(--sans);color:#c7cee0;letter-spacing:.12em;text-transform:uppercase;animation:rise .8s .4s both;text-align:center}
+  .loadbar{width:180px;height:3px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:10px;animation:rise .8s .55s both}
+  .loadbar i{display:block;height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--gold-2),transparent);animation:slide 1.2s ease-in-out infinite}
+  #splashMsg{font:13px var(--sans);color:#9fa8bf;animation:rise .8s .6s both}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @-webkit-keyframes spin{to{-webkit-transform:rotate(360deg)}}
+  @keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+  @keyframes rise{0%{transform:translateY(14px);opacity:0}100%{transform:none;opacity:1}}
+  @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+
+  /* ================= HERO ================= */
+  .hero{position:relative;overflow:hidden;color:#f6efdc;padding:calc(30px + var(--sat)) 18px 92px;
+    background:linear-gradient(160deg,#1b2a4d 0%,#0e162c 55%,#0a1022 100%)}
+  .blob{position:absolute;border-radius:50%;filter:blur(50px);-webkit-filter:blur(50px);opacity:.55;will-change:transform}
+  .b1{width:320px;height:320px;background:#3b5ba8;top:-120px;left:-90px;animation:float1 14s ease-in-out infinite}
+  .b2{width:260px;height:260px;background:#8c2433;bottom:-120px;right:-60px;animation:float2 16s ease-in-out infinite}
+  .b3{width:200px;height:200px;background:#c9a24a;top:30%;right:20%;opacity:.25;animation:float1 18s ease-in-out infinite reverse}
+  @keyframes float1{50%{transform:translate(40px,30px) scale(1.1)}}
+  @keyframes float2{50%{transform:translate(-30px,-40px) scale(1.15)}}
+  .grid-bg{position:absolute;top:0;left:0;right:0;bottom:0;opacity:.09;
+    background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:28px 28px;
+    -webkit-mask-image:radial-gradient(ellipse at 70% 40%,#000 0%,transparent 70%);mask-image:radial-gradient(ellipse at 70% 40%,#000 0%,transparent 70%)}
+  .hero-in{position:relative;z-index:2;max-width:780px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+  .seal{display:inline-flex;align-items:center;gap:8px;font:600 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-2);background:rgba(255,255,255,.06);border:1px solid rgba(240,212,136,.25);padding:5px 12px;border-radius:999px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .hero h1{font-size:clamp(25px,6.4vw,38px);line-height:1.18;margin:14px 0 8px;font-weight:700;letter-spacing:-.01em;
+    background:linear-gradient(180deg,#fff 30%,#e7dcbf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 2px 30px rgba(0,0,0,.2)}
+  .hero .sub{font-style:italic;color:#c3cbdc;font-size:16px;margin:0}
+  .hero-art{width:150px;height:150px;position:relative;filter:drop-shadow(0 18px 30px rgba(0,0,0,.45))}
+  .hero-art svg{position:absolute;top:0;left:0;width:100%;height:100%}
+ @media (max-width:560px){
+  .hero-in{grid-template-columns:1fr}
+  .hero-art{position:absolute;right:0;top:-8px;width:64px;height:64px;opacity:1;filter:drop-shadow(0 8px 14px rgba(0,0,0,.4))}
+  .hero h1{padding-right:0}
+  .seal{display:flex;width:fit-content;max-width:calc(100% - 80px);min-height:48px;letter-spacing:.12em}
+ }
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .stat{display:flex;align-items:center;gap:8px;font:500 12.5px var(--sans);color:#e6ebf5;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:6px 12px;border-radius:12px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+  .stat b{font:700 15px var(--serif);color:var(--gold-2)}
+
+  /* ================= LAYOUT ================= */
+  main{max-width:780px;margin:-60px auto 0;padding:0 14px calc(28px + var(--sab));position:relative;z-index:3}
+  .card{background:var(--paper);border-radius:18px;box-shadow:var(--sh-2);padding:22px 20px;margin-bottom:18px;position:relative;border:1px solid rgba(255,255,255,.5)}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .card{border-color:rgba(255,255,255,.04)} }
+  .card.lift{box-shadow:var(--sh-3)}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  .abstract{font-size:15.5px}
+  .abstract b{font-variant:small-caps;letter-spacing:.05em;color:var(--accent)}
+  .keywords{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .kw{font:500 12px var(--sans);color:var(--muted);background:var(--soft);border:1px solid var(--rule);padding:3px 10px;border-radius:999px}
+
+  h2{display:flex;align-items:center;gap:12px;font-size:20px;margin:0 0 16px;font-weight:700}
+  h2 .num{font:700 14px var(--sans);color:#fff;width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;flex:none;
+    background:linear-gradient(135deg,#b3384b,#6e1724);box-shadow:0 6px 14px -4px rgba(140,36,51,.6),inset 0 1px 0 rgba(255,255,255,.25)}
+  h2 .en{font-weight:400;font-style:italic;color:var(--muted);font-size:15px}
+  figcaption{font-size:14px;color:var(--muted);margin-top:12px;line-height:1.5}
+  figcaption b{color:var(--ink)}
+  figure{margin:0}
+
+  /* ================= CAMERA ================= */
+  .stage{position:relative;width:100%;height:0;padding-bottom:100%;border-radius:16px;overflow:hidden;
+    background:radial-gradient(circle at 50% 35%,#222a38,#07090d);
+    box-shadow:0 0 0 1px rgba(255,255,255,.05) inset,0 24px 50px -18px rgba(7,9,13,.75),0 6px 14px rgba(7,9,13,.25);
+    -webkit-mask-image:-webkit-radial-gradient(white,black)}
+  .stage>*{position:absolute}
+  .stage video,.stage img{top:0;left:0;width:100%;height:100%;object-fit:cover;display:block}
+  .stage video.mirror{transform:scaleX(-1)}
+  .reticle{top:13%;left:13%;right:13%;bottom:13%;pointer-events:none;filter:drop-shadow(0 0 6px rgba(43,179,166,.8))}
+  .reticle i{position:absolute;width:30px;height:30px;border:3px solid #7ff3e6}
+  .reticle i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-top-left-radius:10px}
+  .reticle i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-top-right-radius:10px}
+  .reticle i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-bottom-left-radius:10px}
+  .reticle i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-bottom-right-radius:10px}
+  .scanline{top:13%;left:13%;right:13%;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,#7ff3e6,transparent);box-shadow:0 0 14px 2px rgba(127,243,230,.55);animation:scan 2.6s ease-in-out infinite}
+  @keyframes scan{0%,100%{top:14%}50%{top:85%}}
+  .overlay-b{left:0;right:0;bottom:0;padding:34px 14px 12px;background:linear-gradient(transparent,rgba(0,0,0,.6));font:12.5px var(--sans);color:#f1f1f1;letter-spacing:.02em}
+  .badges{left:12px;right:12px;top:12px;display:flex;justify-content:space-between;pointer-events:none}
+  .badge{font:600 11px var(--sans);color:#fff;background:rgba(10,12,18,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:5px 11px;border-radius:999px;letter-spacing:.08em;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.12)}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:#ff4d5e;animation:pulse 1.6s infinite}
+  .badge.torch{background:rgba(222,168,46,.92);color:#1d1606}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,77,94,.7)}70%{box-shadow:0 0 0 8px rgba(255,77,94,0)}100%{box-shadow:0 0 0 0 rgba(255,77,94,0)}}
+  .placeholder{top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;color:#b6bdc9;text-align:center;padding:20px;font-size:15.5px}
+  .ph-icon{width:84px;height:84px;border-radius:24px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12);animation:bob 3s ease-in-out infinite}
+  .ph-icon svg{width:40px;height:40px;color:#7ff3e6}
+  @keyframes bob{50%{transform:translateY(-6px)}}
+  .flashfx{top:0;left:0;right:0;bottom:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .3s}
+
+  /* ================= BUTTONS ================= */
+  .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+  button,.btn{min-height:52px;border:1px solid var(--rule);background:linear-gradient(180deg,var(--paper),var(--soft));color:var(--ink);font:500 14.5px var(--sans);padding:8px 10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;
+    transition:transform .1s,box-shadow .2s;box-shadow:var(--sh-1),inset 0 1px 0 rgba(255,255,255,.6);touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none;line-height:1.25;text-align:center}
+  button svg,.btn svg{width:19px;height:19px;flex:none}
+  button:active:not(:disabled),.btn:active{transform:scale(.97)}
+  button.primary{background:linear-gradient(180deg,#2e4378,#16213a);color:#fbf5e4;border-color:transparent;box-shadow:0 10px 22px -8px rgba(22,33,58,.7),inset 0 1px 0 rgba(255,255,255,.18)}
+  button.capture{background:linear-gradient(180deg,#b5384c,#7a1a29);color:#fff;border-color:transparent;font-weight:600;box-shadow:0 12px 24px -8px rgba(140,36,51,.75),inset 0 1px 0 rgba(255,255,255,.22)}
+  button.flash-on{background:linear-gradient(180deg,#f3cb63,#d29a1e);border-color:transparent;color:#2a1d02;box-shadow:0 0 0 3px rgba(243,203,99,.25),0 10px 24px -6px rgba(210,154,30,.8)}
+  button:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+  .span2{grid-column:span 2}
+  @media (max-width:480px){
+    .controls button:not(.span2),.controls .btn{flex-direction:column;gap:3px;font-size:13px;min-height:62px;padding:6px 4px}
+    .controls button svg,.controls .btn svg{width:21px;height:21px}
+  }
+  select{width:100%;min-height:46px;margin-top:12px;border:1px solid var(--rule);border-radius:12px;background:var(--paper);color:var(--ink);font:16px var(--sans);padding:6px 10px}
+  .status{display:flex;align-items:center;gap:8px;font:13px var(--sans);color:var(--muted);margin-top:14px;min-height:20px}
+  .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c-healthy);flex:none;box-shadow:0 0 0 3px rgba(61,138,71,.18)}
+  .status.err{color:var(--accent)} .status.err::before{background:var(--accent);box-shadow:0 0 0 3px rgba(140,36,51,.18)}
+  .status.load::before{background:var(--gold);animation:pulse 1.6s infinite}
+
+  /* ================= RESULT ================= */
+  .finding{--tone:var(--c-other);position:relative;border-radius:16px;padding:20px 18px 18px 24px;overflow:hidden;color:#fff;
+    background:linear-gradient(135deg,#2a3150,#141a2c);
+    box-shadow:0 18px 38px -16px rgba(14,22,44,.8),inset 0 1px 0 rgba(255,255,255,.1);transition:background .4s}
+  .finding::before{content:"";position:absolute;top:-40%;right:-20%;width:70%;height:180%;background:radial-gradient(circle,var(--tone) 0%,transparent 65%);opacity:.55;transition:background .4s}
+  .finding::after{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--tone);box-shadow:0 0 18px var(--tone)}
+  .finding>*{position:relative;z-index:1}
+  .finding .lbl{font:600 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#d8deeb;display:flex;align-items:center;gap:8px}
+  .finding .lbl::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--tone);box-shadow:0 0 10px var(--tone)}
+  .finding .row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:6px}
+  .finding .dx{font-size:23px;font-weight:700;line-height:1.28}
+  .finding .dx small{display:block;font-size:14.5px;font-weight:400;font-style:italic;color:#c0c8da;margin-top:3px}
+  .gauge{position:relative;width:96px;height:96px;flex:none}
+  .gauge svg{width:100%;height:100%;transform:rotate(-90deg);filter:drop-shadow(0 0 8px var(--tone))}
+  .gauge .val{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 22px var(--serif);color:#fff}
+  .gauge .val span{font:600 9.5px var(--sans);color:#aab3c7;letter-spacing:.14em}
+  .warn{background:var(--warn-bg);color:var(--warn);padding:11px 14px;font-size:14.5px;margin-top:14px;display:none;border-radius:12px;border:1px solid rgba(201,162,74,.35)}
+  .advice{font-size:15.5px;margin-top:14px;padding:14px 16px;background:var(--soft);border-radius:12px;display:none;border:1px solid var(--rule)}
+  .advice b{font-variant:small-caps;letter-spacing:.04em;color:var(--accent)}
+
+  table{width:100%;border-collapse:collapse;margin-top:20px;font-size:15px}
+  caption{caption-side:top;text-align:left;font-size:14px;color:var(--muted);padding-bottom:8px}
+  caption b{color:var(--ink)}
+  thead th{font:600 11px var(--sans);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;border-top:2px solid var(--ink);border-bottom:1px solid var(--ink);padding:8px 4px}
+  tbody td{padding:10px 4px;border-bottom:1px solid var(--rule);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:2px solid var(--ink)}
+  .cls{display:flex;align-items:flex-start;gap:10px}
+  .sw{width:12px;height:12px;border-radius:4px;background:var(--tone);margin-top:6px;flex:none;box-shadow:0 2px 6px -1px var(--tone)}
+  .cls i{display:block;font-size:12.5px;color:var(--muted)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;width:62px}
+  td.barcell{width:36%}
+  .track{height:10px;background:var(--soft);border-radius:999px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.08)}
+  .fill{height:100%;width:0;background:var(--tone);opacity:.45;border-radius:999px;transition:width .35s ease,opacity .3s}
+  tr.lead .fill{opacity:1;background:linear-gradient(90deg,var(--tone),var(--tone));box-shadow:0 0 10px var(--tone)}
+  tr.lead td{font-weight:700}
+
+  /* ================= PARAMS ================= */
+  .params{display:grid;gap:12px}
+  .param{background:var(--soft);border-radius:14px;padding:14px 16px;border:1px solid var(--rule)}
+  .param .h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:15.5px}
+  .param .h b{font:700 16px var(--sans);color:var(--accent)}
+  .param p{font:13px var(--sans);color:var(--muted);margin:4px 0 0}
+  .switch{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15.5px}
+  .tgl{position:relative;width:50px;height:30px;flex:none}
+  .tgl input{opacity:0;width:100%;height:100%;margin:0;position:absolute;z-index:1;cursor:pointer}
+  .tgl span{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:999px;background:#c9c3b4;transition:background .2s;box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}
+  .tgl span::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:transform .2s}
+  .tgl input:checked+span{background:linear-gradient(180deg,#b5384c,#7a1a29)}
+  .tgl input:checked+span::after{transform:translateX(20px)}
+  input[type=range]{width:100%;margin-top:10px;accent-color:#a3283a;height:28px}
+
+  /* ================= GALLERY ================= */
+  .hist{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .hist figure{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:6px;box-shadow:var(--sh-2);animation:rise .5s both}
+  .hist figure img{width:100%;height:auto;aspect-ratio:1/1;object-fit:cover;border-radius:10px;display:block}
+  .hist figcaption{font-size:12.5px;margin:6px 2px 2px;line-height:1.4}
+  .hist .tag{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+  .empty{font-style:italic;color:var(--muted);font-size:15px;text-align:center;padding:26px 16px;border:1.5px dashed var(--rule);border-radius:14px;background:var(--soft);margin:0}
+  .linkbtn{border:0;min-height:0;padding:0;font:13px var(--sans);color:var(--accent);text-decoration:underline;display:inline;background:none;box-shadow:none}
+
+  .limits{font-size:15px;padding-left:20px;margin:0}
+  .limits li{margin-bottom:6px}
+  ol.refs{font-size:13.5px;color:var(--muted);padding-left:22px;margin:0}
+  ol.refs li{margin-bottom:8px}
+  ol.refs i{color:var(--ink)}
+
+  .install{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#1b2a4d,#0e162c);color:#eef1f8;border-radius:16px;padding:14px 16px;margin-bottom:18px;box-shadow:var(--sh-2);font:14px var(--sans)}
+  .install img{width:44px;height:44px;border-radius:11px;flex:none;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+  .install .x{margin-left:auto;background:none;border:0;color:#aab3c7;min-height:0;box-shadow:none;padding:4px;font-size:20px}
+  .install button.go{min-height:36px;padding:4px 14px;background:var(--gold-2);color:#241a02;border:0;font-weight:600}
+  footer{text-align:center;font:12px var(--sans);color:var(--muted);padding:6px 16px calc(22px + var(--sab))}
+
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation:none!important;transition:none!important} .reveal{opacity:1;transform:none} }
+  /* ================= ADS (Shopee) ================= */
+  .adbox{position:relative;margin:0 0 22px;padding:22px 16px 14px;border-radius:20px;color:#f6efdc;
+    background:linear-gradient(135deg,#1b2a4d 0%,#0e162c 70%);
+    border:2.5px solid var(--gold-2);
+    box-shadow:0 0 0 4px rgba(240,212,136,.14),0 10px 34px -6px rgba(240,212,136,.35),var(--sh-2)}
+  .adbox-label{position:absolute;top:-13px;left:22px;padding:2px 13px;border-radius:999px;font:600 12.5px var(--sans);
+    color:var(--navy);background:linear-gradient(135deg,var(--gold-2),var(--gold));letter-spacing:.02em}
+  .adslide{display:grid;grid-template-columns:minmax(0,1fr) 1px minmax(0,1fr);gap:18px;align-items:center;animation:adIn .5s ease both}
+  @keyframes adIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .ad-left{display:flex;align-items:center;gap:14px;min-width:0}
+  .ad-visual{width:104px;height:104px;flex:none;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:46px;overflow:hidden;
+    background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.22),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.14)}
+  .ad-visual img{width:100%;height:100%;object-fit:contain;display:block}
+  .ad-tag{display:inline-block;font:600 11px var(--sans);color:var(--gold-2);background:rgba(255,255,255,.08);border:1px solid rgba(240,212,136,.3);padding:1px 9px;border-radius:8px;margin-bottom:6px}
+  .ad-title{font:700 clamp(17px,4.4vw,22px)/1.3 var(--serif);color:#fff;margin:0}
+  .ad-sub{font:500 13px var(--sans);color:#c3cbdc;margin:3px 0 0}
+  .ad-div{width:1px;align-self:stretch;background:linear-gradient(180deg,transparent,var(--gold),transparent)}
+  .ad-right{min-width:0}
+  .ad-hd{font:600 15.5px/1.5 var(--serif);color:#fff;margin:0 0 4px}
+  .ad-desc{font:400 13.5px/1.5 var(--sans);color:#d6dcea;margin:0}
+  .ad-btns{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .ad-btn{flex:1 1 130px;min-width:0;text-align:center;text-decoration:none;font:700 14px var(--sans);padding:11px 12px;border-radius:999px;transition:transform .12s ease}
+  .ad-btn:active{transform:scale(.97)}
+  .ad-btn.o{color:#fff;background:linear-gradient(180deg,#2455d8,#1a3ea6);border:1.5px solid #6f94f2}
+  .ad-btn.s{color:#2a1700;background:linear-gradient(180deg,#ffc15a,#f4901f);border:1.5px solid transparent;box-shadow:0 6px 16px -6px rgba(244,144,31,.7)}
+  .ad-dots{display:flex;justify-content:center;gap:7px;margin-top:13px}
+  .ad-dot{position:relative;display:block;width:8px;height:8px;min-height:0;border-radius:4px;border:0;padding:0;box-shadow:none;background:rgba(255,255,255,.3);cursor:pointer;transition:all .25s ease}
+  .ad-dot::after{content:"";position:absolute;top:-9px;bottom:-9px;left:-5px;right:-5px}
+  .ad-dot.on{width:22px;background:var(--gold-2)}
+  .ad-fine{font:400 11px/1.4 var(--sans);color:#9fa8bf;text-align:center;margin-top:8px}
+  @media (max-width:560px){
+    .adslide{grid-template-columns:1fr;gap:14px}
+    .ad-div{width:auto;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+    .ad-visual{width:88px;height:88px;font-size:40px}
+  }
+  /* ================= สัตว์เลี้ยงตกแต่ง ================= */
+  .pet{position:absolute;top:-34px;font-size:55px;line-height:1;pointer-events:none;z-index:4;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));
+    transform-origin:bottom center;animation:petSway 3.4s ease-in-out infinite}
+  .pet.l{left:24px}
+  .pet.r{right:24px}
+  .pet.flip{transform:scaleX(-1);animation:none}   /* กลับด้านให้หันเข้าหากัน */
+  @keyframes petSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.hist .savebtn{min-height:36px;width:100%;margin-top:6px;font-size:12.5px;padding:4px 6px}
+</style>
+</head>
+<body>
+
+<!-- ============ SPLASH ============ -->
+<div id="splash" role="status" aria-live="polite">
+  <div class="logo-xl">
+    <svg class="spin" viewBox="0 0 132 132"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0d488"/><stop offset="1" stop-color="#9c7a2c"/></linearGradient></defs><circle cx="66" cy="66" r="62" fill="none" stroke="url(#gg)" stroke-width="1.5" stroke-dasharray="3 7"/></svg>
+    <svg class="spin-r" viewBox="0 0 132 132"><circle cx="66" cy="66" r="52" fill="none" stroke="#7ff3e6" stroke-opacity=".55" stroke-width="2" stroke-dasharray="60 266" stroke-linecap="round"/></svg>
+    <svg class="paw-pop" viewBox="0 0 132 132"><circle cx="66" cy="66" r="42" fill="url(#gg)" opacity=".14"/><g fill="url(#gg)"><ellipse cx="51" cy="52" rx="7" ry="9"/><ellipse cx="81" cy="52" rx="7" ry="9"/><ellipse cx="40" cy="70" rx="6" ry="7.5"/><ellipse cx="92" cy="70" rx="6" ry="7.5"/><path d="M66 64c-11 0-18 11.5-18 19 0 6 5.6 8 10 6.5 3.4-1.1 5-2.2 8-2.2s4.6 1.1 8 2.2c4.4 1.5 10-.5 10-6.5 0-7.5-7-19-18-19z"/></g></svg>
+  </div>
+  <h1>Skin Smart Vet</h1>
+  <p>AI Dermatology Screening</p>
+  <div class="loadbar"><i></i></div>
+  <div id="splashMsg">กำลังโหลดโมเดล AI…</div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grid-bg"></div>
+  <div class="hero-in">
+    <div>
+      <span class="seal">◆ Research Prototype · Veterinary Dermatology</span>
+      <h1><p style="font-size: 50px;">SKIN SMART VET</p></h1>
+      <p class="sub">AI-assisted image screening of dermatological lesions in companion animals</p>
+      <div class="stats">
+       <span class="stat"><b>6</b> กลุ่มโรค</span>
+        <span class="stat"><b>224²</b> px input</span>
+        <span class="stat"><b>Privacy</b> ส่งภาพเมื่อกดบันทึกเท่านั้น</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 150 150">
+        <defs>
+          <radialGradient id="lens" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#5d7cc4"/><stop offset=".55" stop-color="#1c2a50"/><stop offset="1" stop-color="#0a1022"/></radialGradient>
+          <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc95"/><stop offset="1" stop-color="#8d6b22"/></linearGradient>
+        </defs>
+        <circle cx="75" cy="75" r="56" fill="url(#lens)" stroke="url(#rim)" stroke-width="5"/>
+        <circle cx="75" cy="75" r="44" fill="none" stroke="#7ff3e6" stroke-opacity=".35" stroke-width="1"/>
+        <g fill="#e7b9a6" opacity=".9"><circle cx="62" cy="66" r="9"/><circle cx="84" cy="62" r="7"/><circle cx="78" cy="84" r="10"/><circle cx="60" cy="88" r="6"/></g>
+        <g fill="#8c2433" opacity=".75"><circle cx="62" cy="66" r="3.2"/><circle cx="84" cy="62" r="2.4"/><circle cx="78" cy="84" r="3.6"/><circle cx="60" cy="88" r="2"/></g>
+        <ellipse cx="58" cy="50" rx="16" ry="8" fill="#fff" opacity=".18" transform="rotate(-30 58 50)"/>
+      </svg>
+      <svg class="spin" viewBox="0 0 150 150"><circle cx="75" cy="75" r="68" fill="none" stroke="#f0d488" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="2 6"/></svg>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<div class="install" id="install" hidden>
+  <img src="apple-touch-icon.png" alt="">
+  <div id="installTxt">ติดตั้งเป็นแอปบนหน้าจอโฮม เปิดได้เร็วแบบเต็มจอ</div>
+  <button class="go" id="installGo" hidden>ติดตั้ง</button>
+  <button class="x" id="installX" aria-label="ปิด">×</button>
+</div>
+
+<section class="card reveal">
+<!-- ============ ADS (Shopee) ============ -->
+<aside class="adbox reveal" id="adbox" aria-label="พื้นที่โฆษณา">
+  <span class="adbox-label">พื้นที่โฆษณา / Sponsored</span>
+  <div id="adSlide"></div>
+  <div class="ad-dots" id="adDots"></div>
+  <div class="ad-fine"></div>
+</aside>
+  <div class="abstract"><b>Abstract.</b> ระบบนี้ใช้โครงข่ายประสาทเทียมแบบ transfer learning (MobileNet, Teachable Machine) จำแนกภาพผิวหนังออกเป็น 6 กลุ่ม ได้แก่ ringworm, bacterial dermatosis, fungal infection, healthy , other และ aging hair loss โดยวิเคราะห์ภาพจากกล้องหลังของอุปกรณ์แบบเรียลไทม์ ผลลัพธ์แสดงเป็นค่าความน่าจะเป็นของแต่ละกลุ่ม เพื่อใช้ในการคัดกรองเบื้องต้นและการเรียนการสอน</div>
+  <div class="keywords"><span class="kw">dermatophytosis</span><span class="kw">pyoderma</span><span class="kw">Malassezia</span><span class="kw">deep learning</span><span class="kw">point-of-care</span></div>
+</section>
+
+<!-- 1 -->
+<section class="card lift reveal">
+  <span class="pet r" aria-hidden="true">🐶</span>
+  <h2><span class="num">1</span>การเก็บภาพ <span class="en">Image acquisition</span></h2>
+  <figure>
+    <div class="stage" id="stage">
+      <video id="video" playsinline webkit-playsinline muted autoplay hidden></video>
+      <img id="still" alt="ภาพตัวอย่างที่วิเคราะห์" hidden>
+      <div class="reticle" id="reticle" hidden><i></i><i></i><i></i><i></i></div>
+      <div class="scanline" id="scanline" hidden></div>
+      <div class="badges" id="badges" hidden><span class="badge"><span class="dot"></span>LIVE</span><span class="badge" id="camBadge">REAR</span></div>
+      <div class="overlay-b" id="scale" hidden>วางรอยโรคในกรอบ · ระยะ 10–20 ซม. · แสงสม่ำเสมอ</div>
+      <div class="placeholder" id="placeholder">
+        <div class="ph-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+        <span>กด “เปิดกล้อง” เพื่อเริ่มสแกน<br>หรือ “เลือกรูป” จากอุปกรณ์</span>
+      </div>
+      <div class="flashfx" id="flashfx"></div>
+    </div>
+    <figcaption><b>Figure 1.</b> ภาพจากกล้องแบบเรียลไทม์ บริเวณกึ่งกลาง (center crop) ถูกปรับขนาดเป็น 224 × 224 พิกเซลก่อนป้อนเข้าโมเดล</figcaption>
+  </figure>
+
+  <div class="controls">
+    <button id="btnStart" class="primary" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg><span class="t">เปิดกล้อง</span></button>
+    <button id="btnFlip" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg><span class="t">สลับกล้อง</span></button>
+    <button id="btnFlash" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span class="t">แฟลช: ปิด</span></button>
+    <button id="btnFreeze" class="capture span2" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5" fill="currentColor"/></svg><span class="t">ถ่ายภาพ / หยุด</span></button>
+    <label class="btn" for="file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/></svg>เลือกรูป</label>
+  </div>
+  <input id="file" type="file" accept="image/*" hidden>
+  <select id="camSelect" hidden aria-label="เลือกกล้อง"></select>
+  <div class="status load" id="status">กำลังโหลดโมเดล…</div>
+</section>
+
+<!-- 2 -->
+<section class="card lift reveal">
+  <span class="pet l" aria-hidden="true">🐕</span>
+  <h2><span class="num">2</span>ผลการจำแนก <span class="en">Results</span></h2>
+  <div class="finding" id="finding">
+    <div class="lbl" id="findLbl">Primary finding</div>
+    <div class="row">
+      <div class="dx" id="topName">ยังไม่มีข้อมูลภาพ<small>Awaiting specimen</small></div>
+      <div class="gauge">
+        <svg viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="8"/><circle id="gArc" cx="48" cy="48" r="40" fill="none" stroke="var(--tone)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3" style="transition:stroke-dashoffset .45s ease"/></svg>
+        <div class="val"><div id="topPct">—</div><span>PROB.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="warn" id="warn">ความน่าจะเป็นสูงสุดต่ำกว่าเกณฑ์ — ผลยังไม่น่าเชื่อถือ ควรถ่ายใหม่ให้ใกล้ขึ้น แสงเพียงพอ (เปิดแฟลช) และโฟกัสชัด</div>
+  <div class="advice" id="advice"></div>
+  <table>
+    <caption><b>Table 1.</b> ค่าความน่าจะเป็นของแต่ละกลุ่ม (softmax probability)</caption>
+    <thead><tr><th>กลุ่ม (Class)</th><th>Distribution</th><th style="text-align:right">p (%)</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</section>
+<section class="card reveal" id="cmpCard">
+  <h2><span class="num">★</span>เปรียบเทียบผิวปกติ กับ ผิวที่สงสัย <span class="en">Compare</span></h2>
+  <p style="font-size:14.5px;color:var(--muted);margin-top:-6px">ใช้สำหรับสุนัขสูงอายุที่ขนบาง/ร่วง เพื่อช่วยดูว่าเป็นการเปลี่ยนแปลงตามวัยหรือโรค</p>
+  <div class="params">
+    <div class="param">
+      <div class="h"><span>ภาพ A: ผิวปกติของสุนัขตัวเดียวกัน</span></div>
+      <input type="file" id="cmpA" accept="image/*" style="margin-top:8px;width:100%">
+      <img id="cmpAimg" alt="" hidden style="width:100%;max-height:220px;object-fit:contain;margin-top:8px;border-radius:10px">
+    </div>
+    <div class="param">
+      <div class="h"><span>ภาพ B: ผิวที่สงสัยว่าเป็นโรค</span></div>
+      <input type="file" id="cmpB" accept="image/*" style="margin-top:8px;width:100%">
+      <img id="cmpBimg" alt="" hidden style="width:100%;max-height:220px;object-fit:contain;margin-top:8px;border-radius:10px">
+    </div>
+    <div class="param">
+      <div class="h"><span>อายุสุนัข (ปี) — ไม่บังคับ</span></div>
+      <input type="number" id="cmpAge" min="0" max="30" step="1" style="width:100%;min-height:44px;margin-top:8px;font-size:16px;border:1px solid var(--rule);border-radius:10px;padding:6px 10px;background:var(--paper);color:var(--ink)">
+    </div>
+    <div class="param">
+      <label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px">
+        <input type="checkbox" id="cmpConsent" checked style="margin-top:5px">
+        <span>ยินยอมให้บันทึกภาพทั้งสองไว้ใน Google Drive ของผู้พัฒนาเพื่อเป็นฐานข้อมูลปรับปรุงระบบ (ไม่ติ๊กก็เปรียบเทียบได้ แต่จะไม่บันทึก)</span>
+      </label>
+    </div>
+  </div>
+  <div class="controls" style="grid-template-columns:1fr">
+    <button id="btnCompare" class="primary" type="button">เปรียบเทียบ</button>
+  </div>
+  <div class="status" id="cmpStatus">เลือกภาพ A และ B แล้วกด “เปรียบเทียบ”</div>
+
+  <div class="finding" id="cmpFinding" hidden style="margin-top:16px">
+    <div class="lbl" id="cmpLbl">Comparison</div>
+    <div class="dx" id="cmpDx"></div>
+  </div>
+  <div class="advice" id="cmpAdvice"></div>
+  <table id="cmpTable" hidden>
+    <caption><b>Table 2.</b> ความน่าจะเป็น (%) ของภาพ A และ B</caption>
+    <thead><tr><th>กลุ่ม</th><th style="text-align:right">A ปกติ</th><th style="text-align:right">B สงสัย</th></tr></thead>
+    <tbody id="cmpBody"></tbody>
+  </table>
+</section>
+<!-- 3 -->
+<section class="card reveal">
+  <h2><span class="num">3</span>พารามิเตอร์ <span class="en">Parameters</span></h2>
+  <div class="params">
+    <div class="param">
+      <div class="switch"><span>Temporal smoothing<p>เฉลี่ยความน่าจะเป็นหลายเฟรม (EMA, α = 0.35) ให้ผลนิ่งขึ้น</p></span><label class="tgl"><input type="checkbox" id="smooth" checked aria-label="Temporal smoothing"><span></span></label></div>
+    </div>
+    <div class="param">
+      <div class="h"><span>Confidence threshold</span><b><span id="thrVal">70</span>%</b></div>
+      <input type="range" id="thr" min="40" max="95" step="5" value="70" aria-label="เกณฑ์ความมั่นใจ">
+      <p>ต่ำกว่าค่านี้ ระบบจะเตือนว่าผลยังไม่น่าเชื่อถือ</p>
+    </div>
+    <div class="param">
+      <div class="h"><span>Fungal–bacterial indeterminate margin</span><b><span id="marginVal">20</span>%</b></div>
+      <input type="range" id="margin" min="0" max="50" step="5" value="20" aria-label="ช่วงที่ถือว่าแยกไม่ได้">
+      <p>ถ้าค่าเชื้อรากับแบคทีเรียต่างกันน้อยกว่านี้ จะรายงานว่า “แยกไม่ได้จากภาพ” (ตั้ง 0 เพื่อปิด)</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="card reveal">
+  <h2><span class="num">4</span>ภาพที่บันทึก <span class="en">Captured specimens</span></h2>
+  <div class="hist" id="hist"></div>
+  <p class="empty" id="histEmpty">ยังไม่มีภาพ — กด “ถ่ายภาพ” เพื่อบันทึกภาพพร้อมผลการจำแนก</p>
+  <p style="font-size:13.5px;color:var(--muted);margin:12px 0 0"><b style="color:var(--ink)">Figure 2.</b> ภาพที่บันทึกพร้อมผลการจำแนก แตะภาพเพื่อดาวน์โหลด (ชื่อไฟล์ขึ้นต้นด้วยชื่อกลุ่ม) · <button class="linkbtn" id="btnClear">ล้างทั้งหมด</button></p>
+</section>
+
+<!-- 5 -->
+<section class="card reveal">
+  <h2><span class="num">5</span>ข้อจำกัด <span class="en">Limitations</span></h2>
+  <ul class="limits">
+    <li>ผลจากระบบเป็นการคัดกรองเบื้องต้นเท่านั้น ไม่ใช่การวินิจฉัยโรค</li>
+    <li>ควรยืนยันด้วยการตรวจทางคลินิกและห้องปฏิบัติการ เช่น Wood’s lamp, trichogram, KOH, fungal culture และ cytology</li>
+    <li>ความแม่นยำขึ้นกับคุณภาพภาพ แสง ระยะถ่าย และความหลากหลายของข้อมูลที่ใช้ฝึกโมเดล</li>
+  </ul>
+</section>
+
+<section class="card reveal">
+  <h2><span class="num" style="background:linear-gradient(135deg,#3a4f86,#16213a);box-shadow:0 6px 14px -4px rgba(22,33,58,.6)">§</span>เอกสารอ้างอิง <span class="en">References</span></h2>
+  <ol class="refs">
+    <li>Moriello KA, Coyner K, Paterson S, Mignon B. Diagnosis and treatment of dermatophytosis in dogs and cats: Clinical Consensus Guidelines of the World Association for Veterinary Dermatology. <i>Vet Dermatol</i>. 2017;28(3):266–e68.</li>
+    <li>Hillier A, Lloyd DH, Weese JS, et al. Guidelines for the diagnosis and antimicrobial therapy of canine superficial bacterial folliculitis (ISCAID). <i>Vet Dermatol</i>. 2014;25(3):163–e43.</li>
+    <li>Google Creative Lab. <i>Teachable Machine</i>. https://teachablemachine.withgoogle.com</li>
+  </ol>
+</section>
+</main>
+<footer>Skin Smart Vet v3.0 · สำหรับการศึกษาและวิจัย · ประมวลผลบนอุปกรณ์ ไม่ส่งภาพออกภายนอก</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+<script>
+const MODEL_URL = "https://teachablemachine.withgoogle.com/models/aoYLnpx4h/";
+const SIZE = 224;
+const DRIVE_URL   = "https://script.google.com/macros/s/AKfycby1Q8ALXcYvJrNXv14hFzRr7qX9z79MK1e_hl0NXYNIKc6Dr62DA9c3TIN1xSz37Fks/exec";
+const DRIVE_TOKEN = "skinvet420s";
+
+// เกณฑ์ตัดสินโหมดเปรียบเทียบ (ค่าเริ่มต้น ต้องลองกับเคสจริงแล้วปรับ)
+const AGING_LABEL = "aging hair loss";
+const DISEASES    = ["ringworm","bacterial dermatosis","fungal infection"];
+const CMP_HIGH    = 0.50;  // ความน่าจะเป็นโรครวมของรูปที่สงสัย ต้องถึงเท่านี้จึงเรียกว่า "สูง"
+const CMP_DELTA   = 0.30;  // รูปที่สงสัยต้องมีโรคมากกว่ารูปปกติอย่างน้อยเท่านี้
+const CMP_MAYBE   = 0.35;  // ระดับ "ไม่แน่ใจ"
+const CMP_MAYBE_D = 0.15;
+const PREDICT_MS = 150;
+const BURST_FRAMES = 7;      // [ใหม่] จำนวนเฟรมที่ถ่ายเฉลี่ยตอนกดถ่ายภาพ
+const BURST_GAP_MS = 120;    // [ใหม่] ระยะห่างระหว่างเฟรม (มิลลิวินาที)
+const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+const INFO = {
+  "ringworm": {th:"โรคกลาก", en:"Ringworm (Dermatophytosis)", tone:"--c-ringworm", tip:"มักพบขนร่วงเป็นวงกลม ขอบมีสะเก็ด เป็นโรคติดต่อสู่คน (zoonosis) — ควรตรวจ Wood’s lamp, trichogram/KOH และ fungal culture แยกสัตว์และทำความสะอาดสิ่งแวดล้อม [1]"},
+  "healthy": {th:"ผิวหนังปกติ", en:"Healthy skin", tone:"--c-healthy", tip:"ไม่พบลักษณะผิดปกติชัดเจนจากภาพ หากสัตว์ยังมีอาการคัน แดง หรือขนร่วง ควรตรวจทางคลินิกเพิ่มเติม"},
+  "other": {th:"อื่น ๆ / ไม่ตรงกลุ่ม", en:"Other / out-of-distribution", tone:"--c-other", tip:"ภาพอาจไม่ใช่รอยโรคผิวหนัง หรือเป็นภาวะนอกเหนือจากที่โมเดลเรียนรู้ ควรถ่ายใหม่ให้เห็นรอยโรคชัดเจน"},
+  "bacterial dermatosis": {th:"ผิวหนังอักเสบจากแบคทีเรีย", en:"Bacterial dermatosis (Pyoderma)", tone:"--c-bacterial", tip:"อาจพบตุ่มหนอง ผื่นแดง และ epidermal collarette — ควรทำ cytology (impression smear) และพิจารณาเพาะเชื้อพร้อมทดสอบความไวต่อยา [2]"},
+  "fungal infection": {th:"การติดเชื้อรา", en:"Fungal infection", tone:"--c-fungal", tip:"เช่น Malassezia dermatitis มักมีกลิ่น ผิวมัน คัน และผิวหนาคล้ำ — ควรทำ tape cytology และค้นหาสาเหตุโน้มนำ เช่น ภูมิแพ้"},
+  "aging hair loss": {th:"ขนบางตามวัย", en:"Age-related hair thinning", tone:"--c-aging", tip:"ขนบาง/ร่วงตามอายุ มักไม่มีรอยแดง สะเก็ด หนอง หรือคัน แต่ถ้าเริ่มมีอาการดังที่กล่าวข้างต้นควรไปพบสัตวแพทย์"}
+};
+const info = l => INFO[l] || {th:l, en:l, tone:"--c-other", tip:""};
+const toneVar = t => `var(${t})`;
+
+let model, labels = [];
+let stream = null, track = null, imageCapture = null;
+let facing = "environment";
+let frozen = false, ema = null, lastPredict = 0, loopId = null;
+let wantFlash = false, flashMode = "none";
+const crop = document.createElement("canvas"); crop.width = crop.height = SIZE;
+const cctx = crop.getContext("2d");
+
+const $ = id => document.getElementById(id);
+const video = $("video"), still = $("still");
+const setLabel = (id, txt) => { $(id).querySelector(".t").textContent = txt; };
+function setStatus(msg, err=false){ const s=$("status"); s.textContent=msg; s.classList.toggle("err", err); s.classList.remove("load"); }
+
+// ---------- Splash + reveal ----------
+const t0 = Date.now();
+function hideSplash(){
+  const wait = Math.max(0, 1500 - (Date.now()-t0));   // แสดงอย่างน้อย ~1.5 วินาทีให้ได้เห็นแอนิเมชัน
+  setTimeout(()=>{ $("splash").classList.add("gone"); revealAll(); }, wait);
+}
+setTimeout(hideSplash, 7000);   // กันค้าง หากเครือข่ายช้า
+function revealAll(){
+  const els = document.querySelectorAll(".reveal");
+  if(!("IntersectionObserver" in window)){ els.forEach(e=>e.classList.add("in")); return; }
+  const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} }),{threshold:.08});
+  els.forEach((e,i)=>{ e.style.transitionDelay = Math.min(i,3)*80+"ms"; io.observe(e); });
+}
+
+// ---------- โหลดโมเดล ----------
+(async function init(){
+  try{
+    model = await tmImage.load(MODEL_URL+"model.json", MODEL_URL+"metadata.json");
+    labels = model.getClassLabels();
+    buildTable();
+    $("btnStart").disabled = false;
+    setStatus("โหลดโมเดลสำเร็จ · " + labels.length + " กลุ่ม · พร้อมใช้งาน");
+    $("splashMsg").textContent = "พร้อมใช้งาน ✓";
+  }catch(e){
+    console.error(e);
+    setStatus("โหลดโมเดลไม่สำเร็จ — ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต", true);
+    $("splashMsg").textContent = "โหลดโมเดลไม่สำเร็จ";
+  }
+  if(!window.isSecureContext) setStatus("ต้องเปิดหน้านี้ผ่าน https:// จึงจะใช้กล้องและแฟลชได้ (ยังเลือกรูปจากอุปกรณ์ได้)", true);
+  hideSplash();
+})();
+
+function buildTable(){
+  $("tbody").innerHTML = labels.map((l,i)=>`
+    <tr id="row${i}" style="--tone:${toneVar(info(l).tone)}">
+      <td><div class="cls"><span class="sw"></span><div>${info(l).th}<i>${info(l).en}</i></div></div></td>
+      <td class="barcell"><div class="track"><div class="fill" id="fill${i}"></div></div></td>
+      <td class="num" id="pct${i}">0.0</td>
+    </tr>`).join("");
+}
+
+// ---------- กล้อง ----------
+async function startCamera(deviceId){
+  stopCamera();
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    setStatus(IS_IOS ? "กรุณาเปิดด้วย Safari (iOS 14.3 ขึ้นไป) ผ่านลิงก์ https เพื่อใช้กล้อง" : "เบราว์เซอร์นี้ไม่รองรับการใช้กล้อง", true); return;
+  }
+  const vc = deviceId ? {deviceId:{exact:deviceId}} : {facingMode:{ideal:facing}};
+  Object.assign(vc, {width:{ideal:1280}, height:{ideal:720}});
+  try{ stream = await navigator.mediaDevices.getUserMedia({video:vc, audio:false}); }
+  catch(e){
+    try{ stream = await navigator.mediaDevices.getUserMedia({video:deviceId?{deviceId}:{facingMode:facing}, audio:false}); }
+    catch(e2){ setStatus(camError(e2), true); return; }
+  }
+  track = stream.getVideoTracks()[0];
+  const s = track.getSettings ? track.getSettings() : {};
+  if(s.facingMode) facing = s.facingMode;
+  video.setAttribute("playsinline",""); video.setAttribute("webkit-playsinline",""); video.muted = true;
+  video.srcObject = stream;
+  video.classList.toggle("mirror", facing === "user");
+  await video.play().catch(()=>{});
+  frozen = false; ema = null;
+  show("video");
+  $("camBadge").textContent = facing==="user" ? "FRONT" : "REAR";
+  $("btnFlip").disabled = false; $("btnFreeze").disabled = false;
+  setLabel("btnStart", "ปิดกล้อง");
+  setStatus(facing === "user" ? "กำลังใช้กล้องหน้า" : "กำลังใช้กล้องหลัง");
+  listCameras();
+  loop();
+  await detectFlash();
+  if(wantFlash) await applyFlash(true, true);
+}
+
+function stopCamera(){
+  if(loopId) cancelAnimationFrame(loopId), loopId=null;
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  stream = null; track = null; imageCapture = null; flashMode = "none";
+  updateFlashUI();
+}
+
+function camError(e){
+  if(e.name==="NotAllowedError") return IS_IOS
+    ? "ไม่ได้รับอนุญาตให้ใช้กล้อง — ไปที่ ตั้งค่า › Safari › กล้อง แล้วเลือก “อนุญาต”"
+    : "ไม่ได้รับอนุญาตให้ใช้กล้อง — แตะไอคอนแม่กุญแจข้างแถบที่อยู่ แล้วอนุญาตกล้อง";
+  if(e.name==="NotFoundError"||e.name==="OverconstrainedError") return "ไม่พบกล้องที่เลือก";
+  if(e.name==="NotReadableError") return "กล้องกำลังถูกใช้งานโดยแอปอื่น";
+  return "เปิดกล้องไม่ได้: " + e.message;
+}
+
+async function listCameras(){
+  try{
+    const cams = (await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==="videoinput");
+    const sel = $("camSelect");
+    if(cams.length > 2){
+      const cur = track && track.getSettings ? track.getSettings().deviceId : null;
+      sel.innerHTML = cams.map((c,i)=>`<option value="${c.deviceId}" ${c.deviceId===cur?"selected":""}>${c.label||("กล้อง "+(i+1))}</option>`).join("");
+      sel.hidden = false;
+    } else sel.hidden = true;
+  }catch(_){}
+}
+
+// ---------- แฟลช ----------
+async function detectFlash(){
+  flashMode = "none";
+  if(!track) return updateFlashUI();
+  await new Promise(r=>setTimeout(r, 700));
+  if(!track) return;
+  try{ if(track.getCapabilities && track.getCapabilities().torch) flashMode = "torch"; }catch(_){}
+  if("ImageCapture" in window){
+    try{
+      imageCapture = new ImageCapture(track);
+      if(flashMode === "none"){
+        const pc = await imageCapture.getPhotoCapabilities();
+        if(pc.fillLightMode && pc.fillLightMode.includes("flash")) flashMode = "photo";
+      }
+    }catch(_){ imageCapture = null; }
+  }
+  updateFlashUI();
+}
+
+async function applyFlash(on, silent=false){
+  if(!track) return false;
+  if(flashMode === "torch" || flashMode === "none"){
+    try{
+      await track.applyConstraints({advanced:[{torch:on}]});
+      const st = track.getSettings ? track.getSettings() : {};
+      if(st.torch === on || flashMode === "torch"){ flashMode = "torch"; updateFlashUI(); return true; }
+    }catch(_){}
+  }
+  if(flashMode === "photo"){
+    updateFlashUI();
+    if(on && !silent) setStatus("อุปกรณ์นี้รองรับแฟลชเฉพาะตอนถ่ายภาพ — แฟลชจะทำงานเมื่อกด “ถ่ายภาพ”");
+    return true;
+  }
+  if(on && !silent){
+    setStatus(IS_IOS
+      ? "iOS ยังไม่อนุญาตให้หน้าเว็บควบคุมแฟลชในบางเวอร์ชัน — อัปเดต iOS ล่าสุด หรือใช้แหล่งแสงภายนอก"
+      : "อุปกรณ์นี้ไม่อนุญาตให้หน้าเว็บควบคุมแฟลช — ลองใช้ Chrome เวอร์ชันล่าสุด หรือใช้แหล่งแสงภายนอก", true);
+  }
+  return false;
+}
+
+function updateFlashUI(){
+  const b = $("btnFlash");
+  const rear = !!track && facing !== "user";
+  b.disabled = !rear;
+  const on = wantFlash && rear && flashMode !== "none";
+  b.classList.toggle("flash-on", on);
+  setLabel("btnFlash", flashMode === "photo" ? (wantFlash ? "แฟลชถ่ายภาพ: เปิด" : "แฟลช: ปิด")
+                                             : (wantFlash ? "แฟลช: เปิด" : "แฟลช: ปิด"));
+  const torchOn = on && flashMode === "torch";
+  $("camBadge").classList.toggle("torch", torchOn);
+  if(track) $("camBadge").textContent = (facing==="user" ? "FRONT" : "REAR") + (torchOn ? " · TORCH" : "");
+}
+
+$("btnFlash").onclick = async ()=>{
+  wantFlash = !wantFlash;
+  const ok = await applyFlash(wantFlash);
+  if(wantFlash && !ok) wantFlash = false;
+  else if(ok) setStatus(wantFlash ? (flashMode==="torch" ? "เปิดแฟลชแล้ว" : $("status").textContent) : "ปิดแฟลชแล้ว");
+  updateFlashUI();
+};
+
+// ---------- วนทำนาย ----------
+function loop(ts){
+  loopId = requestAnimationFrame(loop);
+  if(frozen || !model || video.readyState < 2 || !video.videoWidth) return;
+  if(ts - lastPredict < PREDICT_MS) return;
+  lastPredict = ts;
+  drawSquare(video, video.videoWidth, video.videoHeight, facing==="user");
+  predict(true);
+}
+
+function drawSquare(src, w, h, mirror){
+  const side = Math.min(w,h), sx=(w-side)/2, sy=(h-side)/2;
+  cctx.save();
+  if(mirror){ cctx.translate(SIZE,0); cctx.scale(-1,1); }
+  cctx.drawImage(src, sx, sy, side, side, 0, 0, SIZE, SIZE);
+  cctx.restore();
+}
+
+async function predict(live){
+  const preds = await model.predict(crop);
+  let probs = preds.map(p=>p.probability);
+  if(live && $("smooth").checked){
+    ema = ema ? ema.map((v,i)=>0.65*v + 0.35*probs[i]) : probs;
+    probs = ema;
+  }
+  render(probs);
+  return probs;
+}
+// ---------- [ใหม่] ถ่ายหลายเฟรมแล้วเฉลี่ย ----------
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function predictBurst(n, gapMs){
+  const sum = new Array(labels.length).fill(0);   // ตัวสะสมผลรวมของแต่ละกลุ่มโรค
+  let count = 0;                                  // นับว่าได้กี่เฟรมจริง
+  for(let i = 0; i < n; i++){
+    if(!stream || video.readyState < 2 || !video.videoWidth) break;   // กล้องไม่พร้อม → หยุด
+    drawSquare(video, video.videoWidth, video.videoHeight, facing === "user");
+    const preds = await model.predict(crop);
+    preds.forEach((p, k) => { sum[k] += p.probability; });
+    count++;
+    setStatus("กำลังถ่ายหลายเฟรม " + count + "/" + n + " …");
+    if(i < n - 1) await sleep(gapMs);             // พักเล็กน้อยก่อนเฟรมถัดไป
+  }
+  if(count === 0) return null;
+  return { probs: sum.map(v => v / count), count: count };
+}
+
+let lastProbs = null, lastTone = "--c-other", lastName = "";
+function render(probs){
+  lastProbs = probs;
+  let bi = 0; probs.forEach((p,i)=>{ if(p>probs[bi]) bi=i; });
+  const best = probs[bi], inf = info(labels[bi]);
+  const thr = +$("thr").value / 100;
+  const iF = labels.indexOf("fungal infection"), iB = labels.indexOf("bacterial dermatosis");
+  const pair = iF>=0 && iB>=0 && (bi===iF || bi===iB);
+  const pF = iF>=0 ? probs[iF] : 0, pB = iB>=0 ? probs[iB] : 0;
+  const margin = +$("margin").value / 100;
+  let p, tone, adv = "";
+  if(pair && Math.abs(pF-pB) < margin && (pF+pB) >= thr){
+    tone = "--c-mixed"; p = pF+pB;
+    lastName = "แยกเชื้อรา/แบคทีเรียไม่ได้";
+    $("findLbl").textContent = "Indeterminate finding";
+    $("topName").innerHTML = `การติดเชื้อที่ผิวหนัง — แยกเชื้อรา/แบคทีเรียไม่ได้จากภาพ<small>Infectious dermatitis, fungal vs bacterial indeterminate</small>`;
+    $("warn").style.display = "none";
+    adv = `ความน่าจะเป็นของเชื้อรา (${(pF*100).toFixed(1)}%) และแบคทีเรีย (${(pB*100).toFixed(1)}%) ต่างกันน้อยกว่า ${Math.round(margin*100)}% ภาพถ่ายเพียงอย่างเดียวแยกไม่ได้ ควรยืนยันด้วย tape/impression cytology (พบ cocci + neutrophil → แบคทีเรีย; พบ yeast รูปถั่วลิสง → Malassezia) [2]`;
+  } else {
+    tone = inf.tone; p = best;
+    lastName = inf.th;
+    $("findLbl").textContent = best >= thr ? "Primary finding" : "Low-confidence finding";
+    $("topName").innerHTML = `${inf.th}<small>${inf.en}</small>`;
+    $("warn").style.display = best < thr ? "block" : "none";
+    if(best >= thr) adv = inf.tip;
+  }
+  lastTone = tone;
+  $("finding").style.setProperty("--tone", toneVar(tone));
+  $("topPct").textContent = (p*100).toFixed(0) + "%";
+  $("gArc").style.strokeDashoffset = (251.3 * (1 - Math.min(p,1))).toFixed(1);
+  $("advice").innerHTML = adv ? `<b>Interpretation.</b> ${adv}` : "";
+  $("advice").style.display = adv ? "block" : "none";
+  probs.forEach((q,i)=>{
+    $("fill"+i).style.width = (q*100).toFixed(1)+"%";
+    $("pct"+i).textContent = (q*100).toFixed(1);
+    $("row"+i).classList.toggle("lead", i===bi);
+  });
+}
+
+function show(which){
+  video.hidden = which!=="video"; still.hidden = which!=="still";
+  ["reticle","scanline","scale","badges"].forEach(id=>$(id).hidden = which!=="video");
+  $("placeholder").hidden = true;
+}
+
+// ---------- บันทึกภาพ ----------
+let figNo = 0;
+
+// ภาพขนาดใหญ่กว่า 224 px สำหรับเก็บเป็นฐานข้อมูล (สูงสุด 720 px)
+function grabBig(){
+  const useVideo = still.hidden;
+  const el = useVideo ? video : still;
+  const w = useVideo ? video.videoWidth : still.naturalWidth;
+  const h = useVideo ? video.videoHeight : still.naturalHeight;
+  if(!w || !h) return crop.toDataURL("image/jpeg", 0.92);
+  const side = Math.min(w, h), S = Math.min(side, 720);
+  const c = document.createElement("canvas"); c.width = c.height = S;
+  const x = c.getContext("2d");
+  if(useVideo && facing === "user"){ x.translate(S, 0); x.scale(-1, 1); }
+  x.drawImage(el, (w-side)/2, (h-side)/2, side, side, 0, 0, S, S);
+  return c.toDataURL("image/jpeg", 0.9);
+}
+
+function saveSnapshot(flashUsed, fromCamera=false){
+  if(!lastProbs) return;
+  const probsNow = lastProbs.slice();
+  let bi = 0; probsNow.forEach((p,i)=>{ if(p>probsNow[bi]) bi=i; });
+  const url = crop.toDataURL("image/jpeg", 0.92);
+  const time = new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
+  const stamp = Date.now();
+  const name = `${labels[bi].replace(/\s+/g,"_")}_${stamp}.jpg`;
+  const bigUrl = fromCamera ? grabBig() : null;
+  const meta = {
+    source: fromCamera ? "camera" : "file",
+    predicted: labels[bi],
+    prob: +(probsNow[bi]*100).toFixed(1),
+    probs: Object.fromEntries(labels.map((l,i)=>[l, +(probsNow[i]*100).toFixed(1)])),
+    flash: !!flashUsed,
+    time: new Date().toISOString()
+  };
+  figNo++;
+  const fig = document.createElement("figure");
+  fig.innerHTML = `<a href="${url}" download="${name}"><img src="${url}" alt=""></a>
+    <figcaption><b>(${String.fromCharCode(96+((figNo-1)%26)+1)})</b> <span class="tag" style="background:${toneVar(lastTone)}"></span>${lastName}<br><span style="color:var(--muted)">p = ${(probsNow[bi]*100).toFixed(1)}% · ${time}${flashUsed?" · แฟลช":""}</span></figcaption>
+    ${fromCamera ? '<button type="button" class="savebtn">บันทึกข้อมูล</button>' : ''}`;
+  $("hist").prepend(fig);
+  $("histEmpty").hidden = true;
+
+    if(fromCamera){
+    const b = fig.querySelector(".savebtn");
+    b.onclick = async ()=>{
+      b.disabled = true; b.textContent = "กำลังบันทึก…";
+      const ok = await sendToDrive("camera", "camera_" + name, bigUrl, meta);
+      b.textContent = ok ? "บันทึกแล้ว ✓" : "ไม่สำเร็จ: " + lastDriveError + " (แตะลองใหม่)";
+      b.disabled = ok;
+    };
+  }
+}
+
+function flashEffect(){
+  const fx = $("flashfx"); fx.style.opacity = .85;
+  setTimeout(()=>fx.style.opacity = 0, 120);
+  if(navigator.vibrate) navigator.vibrate(30);   // Android: สั่นเบา ๆ ตอนถ่าย
+}
+// ---------- ส่งรูปไป Google Drive (ผ่าน Apps Script) ----------
+let lastDriveError = "";
+async function sendToDrive(folder, name, dataUrl, meta){
+  lastDriveError = "";
+  try{
+    const res = await fetch(DRIVE_URL, {
+      method: "POST",
+      body: JSON.stringify({ token: DRIVE_TOKEN, folder, name, data: dataUrl, meta })
+    });
+    const text = await res.text();
+    let j;
+    try{ j = JSON.parse(text); }
+    catch(_){
+      lastDriveError = "ตอบกลับไม่ใช่ JSON (สิทธิ์ Deploy อาจไม่ใช่ Anyone)";
+      console.error("Drive response:", text.slice(0, 300));
+      return false;
+    }
+    if(j.ok) return true;
+    lastDriveError = j.error || "unknown";
+    return false;
+  }catch(e){
+    lastDriveError = e.message;
+    console.error(e);
+    return false;
+  }
+}
+// ---------- ปุ่ม ----------
+function resetCamButtons(){ setLabel("btnStart","เปิดกล้อง"); $("btnFlip").disabled=true; $("btnFreeze").disabled=true; setLabel("btnFreeze","ถ่ายภาพ / หยุด"); }
+$("btnStart").onclick = ()=>{
+  if(stream){ stopCamera(); resetCamButtons(); setStatus("ปิดกล้องแล้ว"); }
+  else startCamera();
+};
+
+$("btnFlip").onclick = ()=>{ facing = facing==="environment" ? "user" : "environment"; startCamera(); };
+$("camSelect").onchange = e => startCamera(e.target.value);
+$("btnFreeze").onclick = async ()=>{
+  if(!stream) return;
+  if(!frozen){
+    frozen = true;
+    $("btnFreeze").disabled = true;              // [ใหม่] กันกดซ้ำระหว่างกำลังถ่าย
+    try{                                         // [ใหม่] ถ้ามีอะไรพัง จะได้ไม่ค้าง
+      let usedFlash = false;
+      let singleShot = false;                    // [ใหม่] true = ใช้ภาพนิ่งภาพเดียว (แฟลชแบบ photo)
+
+      if(wantFlash && flashMode === "photo" && imageCapture){
+        try{
+          const blob = await imageCapture.takePhoto({fillLightMode:"flash"});
+          const bmp = await createImageBitmap(blob);
+          drawSquare(bmp, bmp.width, bmp.height, false);
+          still.src = URL.createObjectURL(blob);
+          show("still"); usedFlash = true; singleShot = true;
+        }catch(_){}
+      }
+
+      flashEffect();
+      $("scanline").hidden = true;
+
+      if(singleShot){
+        // กรณีแฟลชแบบ photo: ได้ภาพนิ่งภาพเดียวอยู่แล้ว ทำนายครั้งเดียวเหมือนเดิม
+        video.pause();
+        ema = null; await predict(false);
+      } else {
+        // [ใหม่] กรณีปกติ: ถ่ายหลายเฟรมแล้วเฉลี่ย
+        usedFlash = wantFlash && flashMode === "torch";
+        const burst = await predictBurst(BURST_FRAMES, BURST_GAP_MS);
+        if(!burst){
+          frozen = false; show("video");
+          setStatus("ถ่ายไม่สำเร็จ ลองใหม่อีกครั้ง", true);
+          return;
+        }
+        video.pause();
+        render(burst.probs);
+        setStatus("ผลเฉลี่ยจาก " + burst.count + " เฟรม");
+      }
+
+      saveSnapshot(usedFlash, true);
+      setLabel("btnFreeze", "สแกนต่อ");
+    }catch(e){
+      console.error(e);
+      frozen = false; show("video");
+      setStatus("ถ่ายไม่สำเร็จ: " + e.message, true);
+    }finally{
+      $("btnFreeze").disabled = !stream;         // เปิดปุ่มให้กดได้อีกครั้ง
+    }
+  } else {
+    frozen = false; ema = null; show("video"); video.play().catch(()=>{});
+    setLabel("btnFreeze", "ถ่ายภาพ / หยุด");
+  }
+};
+
+$("file").onchange = e=>{
+  const f = e.target.files[0]; if(!f || !model) return;
+  if(stream){ stopCamera(); resetCamButtons(); }
+  still.onload = async ()=>{
+    show("still");
+    drawSquare(still, still.naturalWidth, still.naturalHeight, false);
+    ema = null; await predict(false); saveSnapshot(false);
+    setStatus("วิเคราะห์จากไฟล์: " + f.name);
+  };
+  still.src = URL.createObjectURL(f); e.target.value = "";
+};
+$("thr").oninput = e=>{ $("thrVal").textContent = e.target.value; if(lastProbs) render(lastProbs); };
+$("margin").oninput = e=>{ $("marginVal").textContent = e.target.value; if(lastProbs) render(lastProbs); };
+$("btnClear").onclick = ()=>{ $("hist").innerHTML=""; $("histEmpty").hidden=false; figNo=0; };
+// ================= เปรียบเทียบ A (ปกติ) กับ B (สงสัย) =================
+function cmpStatus(msg, err=false){ const s=$("cmpStatus"); s.textContent=msg; s.classList.toggle("err", err); s.classList.remove("load"); }
+
+function loadImg(file){
+  return new Promise((ok,bad)=>{ const im=new Image(); im.onload=()=>ok(im); im.onerror=bad; im.src=URL.createObjectURL(file); });
+}
+function imgToDataUrl(im, max=1024){
+  const s = Math.min(1, max/Math.max(im.naturalWidth, im.naturalHeight));
+  const c = document.createElement("canvas");
+  c.width = Math.round(im.naturalWidth*s); c.height = Math.round(im.naturalHeight*s);
+  c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.9);
+}
+async function probsOf(im){
+  drawSquare(im, im.naturalWidth, im.naturalHeight, false);
+  const preds = await model.predict(crop);
+  return preds.map(p=>p.probability);
+}
+["A","B"].forEach(k=>{
+  $("cmp"+k).onchange = e=>{
+    const f = e.target.files[0]; const p = $("cmp"+k+"img");
+    if(f){ p.src = URL.createObjectURL(f); p.hidden = false; } else p.hidden = true;
+  };
+});
+
+function showCompare(pa, pb){
+  const L = labels.map(l=>l.toLowerCase());
+  const idx = n => L.indexOf(n);
+  const iAging = idx(AGING_LABEL), iOther = idx("other");
+  const dIdx = DISEASES.map(idx).filter(i=>i>=0);
+  const sum = (p,ix)=>ix.reduce((s,i)=>s+p[i],0);
+  const dA = sum(pa,dIdx), dB = sum(pb,dIdx);
+  const aging = iAging>=0 ? pb[iAging] : 0;
+  const adj = dB - dA;   // โรคที่ "เพิ่มขึ้น" เมื่อเทียบกับผิวปกติของตัวเดียวกัน
+
+  // จัดอันดับโรค โดยหักส่วนที่ผิวปกติของตัวเองก็ให้ค่านั้นอยู่แล้ว
+  const rank = dIdx.map(i=>({i, v:Math.max(0, pb[i]-pa[i])})).sort((x,y)=>y.v-x.v);
+  const total = rank.reduce((s,r)=>s+r.v,0) || 1;
+  const rankTxt = rank.filter(r=>r.v>0).slice(0,3)
+    .map(r=>`${info(labels[r.i]).th} (~${Math.round(r.v/total*100)}%)`).join(" · ");
+
+  let lbl, dx, tone, adv;
+  if(iOther>=0 && (pa[iOther]>0.5 || pb[iOther]>0.5)){
+    lbl="Invalid image"; tone="--c-other";
+    dx="ภาพอาจไม่ใช่ผิวหนังสุนัขชัดเจน";
+    adv="ถ่ายใหม่ให้เห็นผิวหนังและขนชัด ระยะ 10–20 ซม. แสงสม่ำเสมอ ใช้ตำแหน่งและแสงใกล้เคียงกันทั้งสองภาพ";
+  } else if(dB >= CMP_HIGH && adj >= CMP_DELTA && dB > aging){
+    lbl="Likely disease"; tone="--c-ringworm";
+    dx="มีโอกาสเป็นโรคผิวหนังสูง ไม่ใช่แค่ขนบางตามวัย";
+    adv=`ภาพ B มีค่าโรคสูงกว่าภาพปกติชัดเจน (เพิ่มขึ้น ${(adj*100).toFixed(0)} จุด) โรคที่เป็นไปได้ที่สุดเมื่อเทียบกับฐานข้อมูลโมเดล: ${rankTxt||"—"} ควรพบสัตวแพทย์เพื่อตรวจยืนยัน (cytology, KOH, Wood’s lamp, เพาะเชื้อ)`;
+  } else if(dB >= CMP_MAYBE && adj >= CMP_MAYBE_D){
+    lbl="Uncertain"; tone="--c-mixed";
+    dx="ไม่แน่ใจ — มีสัญญาณโรคบางส่วน";
+    adv=`ภาพ B มีสัญญาณโรคเพิ่มขึ้นเล็กน้อยจากภาพปกติ โรคที่ต้องระวัง: ${rankTxt||"—"} ลองถ่ายซ้ำให้ชัดขึ้น และหากมีอาการคัน แดง สะเก็ด หรือขนร่วงเป็นหย่อม ควรพบสัตวแพทย์`;
+  } else {
+    lbl="Likely age-related / normal"; tone = (aging>0.3) ? "--c-aging" : "--c-healthy";
+    dx = (aging>0.3) ? "น่าจะเป็นขนบางตามวัย ไม่พบสัญญาณโรคเพิ่มจากภาพปกติ" : "ไม่พบสัญญาณโรคเพิ่มจากภาพปกติ";
+    adv="ผลนี้ไม่ได้ยืนยันว่าไม่เป็นโรค หากสุนัขคัน เลีย เกา มีกลิ่น หรือขนร่วงเร็วผิดปกติ ควรพบสัตวแพทย์";
+  }
+  const age = +$("cmpAge").value;
+  if(age >= 7 && lbl.startsWith("Likely age")) adv += ` (สุนัขอายุ ${age} ปี เข้าข่ายสูงวัย ขนบางตามวัยพบได้)`;
+
+  $("cmpFinding").hidden = false;
+  $("cmpFinding").style.setProperty("--tone", toneVar(tone));
+  $("cmpLbl").textContent = lbl;
+  $("cmpDx").textContent = dx;
+  $("cmpAdvice").innerHTML = `<b>Interpretation.</b> ${adv}`;
+  $("cmpAdvice").style.display = "block";
+  $("cmpTable").hidden = false;
+  $("cmpBody").innerHTML = labels.map((l,i)=>`<tr><td>${info(l).th}</td><td class="num">${(pa[i]*100).toFixed(1)}</td><td class="num">${(pb[i]*100).toFixed(1)}</td></tr>`).join("");
+  return {verdict: lbl, dA, dB};
+}
+
+$("btnCompare").onclick = async ()=>{
+  const fa = $("cmpA").files[0], fb = $("cmpB").files[0];
+  if(!model){ cmpStatus("โมเดลยังโหลดไม่เสร็จ", true); return; }
+  if(!fa || !fb){ cmpStatus("กรุณาเลือกให้ครบทั้งภาพ A และภาพ B", true); return; }
+  if(stream){ stopCamera(); resetCamButtons(); }   // กล้องกับเปรียบเทียบใช้ canvas ร่วมกัน จึงปิดกล้องก่อน
+  const btn = $("btnCompare"); btn.disabled = true;
+  try{
+    cmpStatus("กำลังวิเคราะห์…");
+    const ia = await loadImg(fa), ib = await loadImg(fb);
+    const pa = await probsOf(ia);   // ต้องทำทีละภาพ (ห้าม Promise.all) เพราะใช้ canvas ตัวเดียวกัน
+    const pb = await probsOf(ib);
+    const r = showCompare(pa, pb);
+    cmpStatus("วิเคราะห์เสร็จแล้ว");
+
+    if($("cmpConsent").checked){
+      cmpStatus("กำลังบันทึกภาพไปยัง Google Drive…");
+      const pair = Date.now();
+      const meta = { pair, age: $("cmpAge").value || null, verdict: r.verdict,
+        diseaseA: +(r.dA*100).toFixed(1), diseaseB: +(r.dB*100).toFixed(1),
+        probsA: Object.fromEntries(labels.map((l,i)=>[l,+(pa[i]*100).toFixed(1)])),
+        probsB: Object.fromEntries(labels.map((l,i)=>[l,+(pb[i]*100).toFixed(1)])) };
+      const ok1 = await sendToDrive("upload", `normal_${pair}.jpg`,  imgToDataUrl(ia), {...meta, role:"normal"});
+      const ok2 = await sendToDrive("upload", `suspect_${pair}.jpg`, imgToDataUrl(ib), {...meta, role:"suspect"});
+      cmpStatus(ok1 && ok2 ? "วิเคราะห์เสร็จ และบันทึกภาพลง Drive แล้ว ✓" : "วิเคราะห์เสร็จ แต่บันทึกลง Drive ไม่สำเร็จ", !(ok1 && ok2));
+    }
+  }catch(e){
+    console.error(e); cmpStatus("เกิดข้อผิดพลาด: " + e.message, true);
+  }finally{ btn.disabled = false; }
+};
+let resumeCam = false;
+document.addEventListener("visibilitychange", ()=>{
+  if(document.hidden && stream){ resumeCam = !frozen; stopCamera(); }
+  else if(!document.hidden && resumeCam){ resumeCam=false; startCamera(); }
+});
+
+// ---------- ติดตั้งเป็นแอป (iOS / Android) ----------
+(function installPrompt(){
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  let dismissed = false; try{ dismissed = localStorage.getItem("skinvet-install-x")==="1"; }catch(_){}
+  if(standalone || dismissed) return;
+  let deferred = null;
+  window.addEventListener("beforeinstallprompt", e=>{     // Android Chrome
+    e.preventDefault(); deferred = e;
+    $("install").hidden = false; $("installGo").hidden = false;
+  });
+  if(IS_IOS){                                              // iOS Safari: ต้องเพิ่มเองผ่านปุ่มแชร์
+    $("installTxt").innerHTML = "ติดตั้งเป็นแอป: แตะ <b>แชร์</b> <span style='font-size:16px'>⎋</span> แล้วเลือก <b>“เพิ่มไปยังหน้าจอโฮม”</b>";
+    $("install").hidden = false;
+  }
+  $("installGo").onclick = async ()=>{ if(!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; $("install").hidden = true; };
+  $("installX").onclick = ()=>{ $("install").hidden = true; try{ localStorage.setItem("skinvet-install-x","1"); }catch(_){} };
+})();
+</script>
+<script>
+(function(){
+  var ADS = [
+    { icon:"", img:"https://i.postimg.cc/mD37qTjh/ad1-shampoo.webp", tag:"ประชาสัมพันธ์",
+      title:"แชมพูอาบน้ำสุนัขเซนการ์ดทุกสูตร", sub:"สำหรับสุนัข",
+      headline:"ดูแลสัตว์เลี้ยงของคุณด้วยสินค้าแนะนำ",
+      desc:"ดูรายละเอียดสินค้าและโปรโมชันล่าสุดได้ที่ Shopee",
+      url:"https://th.shp.ee/FyM6HCQ3" },
+    { icon:"", img:"https://i.postimg.cc/153YpdRf/ad2.webp", tag:"ประชาสัมพันธ์",
+      title:"แชมพูอาบน้ำสมุนไพร 5 สูตร", sub:"สำหรับสุนัข",
+      headline:"ดูแลสัตว์เลี้ยงของคุณด้วยสินค้าแนะนำ",
+      desc:"ดูรายละเอียดสินค้าและโปรโมชันล่าสุดได้ที่ Shopee",
+      url:"https://th.shp.ee/1B4t5so7" },
+    { icon:"", img:"https://i.postimg.cc/fTVfWQTR/ad3.webp", tag:"ประชาสัมพันธ์",
+      title:"แชมพูสมาร์ทฮาร์ทกำจัดเห็บ", sub:"สำหรับสุนัข",
+      headline:"ดูแลสัตว์เลี้ยงของคุณด้วยสินค้าแนะนำ",
+      desc:"ดูรายละเอียดสินค้าและโปรโมชันล่าสุดได้ที่ Shopee",
+      url:"https://th.shp.ee/PgWga1xV" }
+  ];
+  var INTERVAL = 6000;            // สลับทุกกี่มิลลิวินาที (6000 = 6 วินาที)
+
+  var slideEl = document.getElementById("adSlide");
+  var dotsEl  = document.getElementById("adDots");
+  if(!slideEl || !dotsEl || !ADS.length) return;
+
+  var idx = Math.floor(Math.random()*ADS.length), paused = false, timer = null;
+
+  function h(tag, cls, text){
+    var e = document.createElement(tag);
+    if(cls) e.className = cls;
+    if(text != null) e.textContent = text;
+    return e;
+  }
+  function link(cls, text, url){
+    var a = h("a", "ad-btn " + cls, text);
+    a.href = url; a.target = "_blank";
+    a.rel = "noopener noreferrer sponsored nofollow";
+    return a;
+  }
+
+  function render(){
+    var ad = ADS[idx];
+    var slide = h("div", "adslide");
+
+    var left = h("div", "ad-left");
+    var vis = h("div", "ad-visual");
+    if(ad.img){
+      var im = document.createElement("img");
+      im.alt = ""; im.src = ad.img;
+      im.onerror = function(){ vis.textContent = ad.icon; };
+      vis.appendChild(im);
+    } else { vis.textContent = ad.icon; }
+    var txt = h("div");
+    txt.appendChild(h("span", "ad-tag", ad.tag || "ประชาสัมพันธ์"));
+    txt.appendChild(h("p", "ad-title", ad.title));
+    if(ad.sub) txt.appendChild(h("p", "ad-sub", ad.sub));
+    left.appendChild(vis); left.appendChild(txt);
+
+    var right = h("div", "ad-right");
+    right.appendChild(h("p", "ad-hd", ad.headline));
+    right.appendChild(h("p", "ad-desc", ad.desc));
+    var btns = h("div", "ad-btns");
+    btns.appendChild(link("o", "รายละเอียดเพิ่มเติม", ad.url));
+    btns.appendChild(link("s", "สั่งซื้อเลย", ad.url));
+    right.appendChild(btns);
+
+    slide.appendChild(left); slide.appendChild(h("div", "ad-div")); slide.appendChild(right);
+    slideEl.innerHTML = ""; slideEl.appendChild(slide);
+
+    var dots = dotsEl.children;
+    for(var i = 0; i < dots.length; i++) dots[i].className = "ad-dot" + (i === idx ? " on" : "");
+  }
+
+  ADS.forEach(function(_, i){
+    var b = h("button", "ad-dot");
+    b.type = "button"; b.setAttribute("aria-label", "โฆษณาที่ " + (i+1));
+    b.addEventListener("click", function(){ idx = i; render(); start(); });
+    dotsEl.appendChild(b);
+  });
+
+  function start(){
+    clearInterval(timer);
+    if(ADS.length < 2) return;
+    timer = setInterval(function(){
+      if(paused || document.hidden) return;
+      idx = (idx + 1) % ADS.length; render();
+    }, INTERVAL);
+  }
+
+  var box = document.getElementById("adbox");
+  box.addEventListener("mouseenter", function(){ paused = true; });
+  box.addEventListener("mouseleave", function(){ paused = false; });
+  box.addEventListener("touchstart", function(){ paused = true; }, {passive:true});
+  box.addEventListener("touchend", function(){ setTimeout(function(){ paused = false; }, 4000); }, {passive:true});
+
+  render(); start();
+})();
+// ===== กดที่ไอคอนกล้องเพื่อเปิดกล้อง =====
+(function () {
+  // ← แก้: ใส่ id ของกล่องที่ครอบไอคอนกล้อง
+  const placeholder = document.getElementById("placeholder");
+
+  // หาปุ่ม "เปิดกล้อง" จากข้อความบนปุ่มอัตโนมัติ
+  const openCamBtn = [...document.querySelectorAll("button")].find((b) =>
+    b.textContent.includes("เปิดกล้อง")
+  );
+
+  if (!placeholder || !openCamBtn) {
+    console.warn("ไม่พบกล่องไอคอนกล้อง หรือปุ่มเปิดกล้อง ตรวจชื่อ id อีกครั้ง");
+    return;
+  }
+
+  placeholder.style.cursor = "pointer"; // เมาส์เป็นรูปมือเมื่อชี้
+  placeholder.addEventListener("click", () => {
+    if (!openCamBtn.disabled) openCamBtn.click();
+  });
+})();
+</script>
+</body>
+</html>
